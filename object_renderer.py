@@ -7,17 +7,13 @@ class ObjectRenderer:
         self.game = game
         self.screen = game.screen
         self.wall_textures = self.load_wall_textures(artworks)
-        self.sky_image = self.get_texture('resources/textures/sky.png', (WIDTH, HALF_HEIGHT))
-        self.sky_offset = 0
 
     def draw(self):
         self.draw_background()
         self.render_game_objects()
 
     def draw_background(self):
-        self.sky_offset = (self.sky_offset + 4.5 * self.game.player.rel) % WIDTH
-        self.screen.blit(self.sky_image, (-self.sky_offset, 0))
-        self.screen.blit(self.sky_image, (-self.sky_offset + WIDTH, 0))
+        pg.draw.rect(self.screen, CEILING_COLOR, (0, 0, WIDTH, HALF_HEIGHT))
         pg.draw.rect(self.screen, FLOOR_COLOR, (0, HALF_HEIGHT, WIDTH, HEIGHT))
 
     def render_game_objects(self):
@@ -33,13 +29,16 @@ class ObjectRenderer:
     def load_wall_textures(self, artworks: dict) -> dict:
         textures = {
             1: self.get_texture('resources/textures/1.png'),
-            2: self.get_texture('resources/textures/2.png'),
-            3: self.get_texture('resources/textures/3.png'),
-            4: self.get_texture('resources/textures/4.png'),
             5: self.get_texture('resources/textures/5.png'),
         }
         textures.update(artworks)
         return textures
 
     def add_artworks(self, artworks: dict):
+        self.wall_textures.update(artworks)
+
+    def set_artworks(self, artworks: dict):
+        for texture_id in list(self.wall_textures.keys()):
+            if texture_id >= ARTWORK_FIRST_TEXTURE_ID:
+                del self.wall_textures[texture_id]
         self.wall_textures.update(artworks)
